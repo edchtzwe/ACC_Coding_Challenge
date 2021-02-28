@@ -68,6 +68,7 @@ def ResolveParentheses(splitExpression):
     symbol = ""
     fastForward = ""
     seedNum = ""
+    finish = False
 
     for i in range(0, len(splitExpression)):
         if (IsNumber(fastForward)):
@@ -78,7 +79,7 @@ def ResolveParentheses(splitExpression):
                 fastForward = ""
 
         currItem = splitExpression[i]
-        if currItem == "(":
+        if (currItem == "(" and not finish):
             for j in range(i+1, len(splitExpression)):
                 currInnerItem = splitExpression[j]
                 if IsNumber(currInnerItem):
@@ -90,6 +91,7 @@ def ResolveParentheses(splitExpression):
                 else:
                     if currInnerItem == ")":
                         fastForward = j + 1
+                        finish = True
                         break
                     else:
                         symbol = currInnerItem
@@ -150,16 +152,25 @@ def ResolveAllShifts(splitExpression):
         if (item == "*" or item == "/"):
             count = count + 1
     for i in range(0, count):
-        print(i)
         splitExpression = ResolveShifts(splitExpression)
+
+    return splitExpression
+
+def ResolveAllParentheses(splitExpression):
+    count = 0
+    for item in splitExpression:
+        if (item == "("):
+            count = count + 1
+    for i in range(0, count):
+        splitExpression = ResolveParentheses(splitExpression)
 
     return splitExpression
 
 def Calculate(splitExpression):
     # first resolve all parentheses, making the expression 'flat'
-    newExpressionList = ResolveParentheses(splitExpression)
+    newExpressionList = ResolveAllParentheses(splitExpression)
     newExpressionList = ResolveAllShifts(newExpressionList)
-    print(newExpressionList)
+    # print(newExpressionList)
     result = 0
     parentheses = False
     currentNumber = ""
@@ -175,7 +186,8 @@ def Calculate(splitExpression):
         
 
 def Main():
-    expression = "(500+80) * 3000/800 + 30"
+    expression = "4/2+(1+2)+(5+5)"
+    # expression = "(500+80) * 3000/800 + 30 + (5 + 5)"
     splitExpression = SplitExpression(expression)
     # print(splitExpression)
     Calculate(splitExpression)
