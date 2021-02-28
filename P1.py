@@ -146,6 +146,44 @@ def ResolveShifts(splitExpression):
             newList.append(currItem)
     return newList
 
+def ResolveAddSub(splitExpression):
+    newList = []
+    currentNumber = ""
+    symbol = ""
+    fastForward = ""
+    seedNum = ""
+    finish = False
+
+    for i in range(0, len(splitExpression)):
+        if (IsNumber(fastForward)):
+            # just skip til the next part
+            if (i < fastForward):
+                continue
+            else:
+                fastForward = ""
+        currItem = splitExpression[i]
+        # print("currItem "+str(currItem)+"\n")
+        if (IsNumber(currItem) and not finish):
+            # then peek forward, if the symbol is not div/mul, don't bother
+            if (i + 1 < len(splitExpression)):
+                nextItem = splitExpression[i + 1]
+                # print("nextItem "+str(nextItem)+"\n")
+                if (nextItem == "+" or nextItem == "-"):
+                    symbol = nextItem
+                    if (IsEmpty(seedNum)):
+                        # the first num after ( is the seed
+                        seedNum = currItem
+                    nextNumber = splitExpression[i + 2]
+                    # print("nextNumber "+str(nextNumber)+"\n")
+                    seedNum = DoMath(seedNum, nextNumber, symbol)
+                    # done resolving the parentheses eval, add it to the list
+                    newList.append(seedNum)
+                    fastForward = i + 3
+                    finish = True
+        else:
+            newList.append(currItem)
+    return newList
+    
 def ResolveAllShifts(splitExpression):
     count = 0
     for item in splitExpression:
@@ -166,28 +204,30 @@ def ResolveAllParentheses(splitExpression):
 
     return splitExpression
 
+def ResolveAllAddSub(splitExpression):
+    count = 0
+    for item in splitExpression:
+        if (item == "+" or item == "-"):
+            count = count + 1
+    for i in range(0, count):
+        splitExpression = ResolveAddSub(splitExpression)
+
+    return splitExpression
+
 def Calculate(splitExpression):
     # first resolve all parentheses, making the expression 'flat'
     newExpressionList = ResolveAllParentheses(splitExpression)
     newExpressionList = ResolveAllShifts(newExpressionList)
-    # print(newExpressionList)
-    result = 0
-    parentheses = False
-    currentNumber = ""
-    previousNumber = ""
-    for item in splitExpression:
-        if item == "(":
-            parentheses =  True
-        elif item == ")":
-            parentheses =  False
-        elif IsNumber(item):
-            previousNumber = currentNumber
-            currentNumber = float(item)
-        
+    newExpressionList = ResolveAllAddSub(newExpressionList)
+    print(newExpressionList)
+
+def ValidateExpression:
+    pass
 
 def Main():
-    expression = "4/2+(1+2)+(5+5)"
-    # expression = "(500+80) * 3000/800 + 30 + (5 + 5)"
+    # expression = "4/2+(1+2)+(5+5)"
+    expression = "(500+80) * 3000/800 + 30 + (5 + 5)"
+    expresssion = input("Please enter your expression : ")
     splitExpression = SplitExpression(expression)
     # print(splitExpression)
     Calculate(splitExpression)
