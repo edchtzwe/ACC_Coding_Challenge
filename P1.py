@@ -144,10 +144,21 @@ def ResolveShifts(splitExpression):
             newList.append(currItem)
     return newList
 
+def ResolveAllShifts(splitExpression):
+    count = 0
+    for item in splitExpression:
+        if (item == "*" or item == "/"):
+            count = count + 1
+    for i in range(0, count):
+        print(i)
+        splitExpression = ResolveShifts(splitExpression)
+
+    return splitExpression
+
 def Calculate(splitExpression):
     # first resolve all parentheses, making the expression 'flat'
     newExpressionList = ResolveParentheses(splitExpression)
-    newExpressionList = ResolveShifts(newExpressionList)
+    newExpressionList = ResolveAllShifts(newExpressionList)
     print(newExpressionList)
     result = 0
     parentheses = False
@@ -164,7 +175,7 @@ def Calculate(splitExpression):
         
 
 def Main():
-    expression = "(500+80) * 3000/800 + 30 + (5 + 5)"
+    expression = "(500+80) * 3000/800 + 30"
     splitExpression = SplitExpression(expression)
     # print(splitExpression)
     Calculate(splitExpression)
