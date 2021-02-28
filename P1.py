@@ -219,18 +219,28 @@ def Calculate(splitExpression):
     newExpressionList = ResolveAllParentheses(splitExpression)
     newExpressionList = ResolveAllShifts(newExpressionList)
     newExpressionList = ResolveAllAddSub(newExpressionList)
-    print(newExpressionList)
+    # print(newExpressionList)
+    return newExpressionList
 
-def ValidateExpression:
-    pass
+def ValidateExpression(expression):
+    for item in expression:
+        if (item != "+" and item != "-" and item != "*" and item != "/" and item != " " and item != "(" and item != ")" and not IsNumber(item)):
+            return False
+
+    return True
 
 def Main():
     # expression = "4/2+(1+2)+(5+5)"
-    expression = "(500+80) * 3000/800 + 30 + (5 + 5)"
-    expresssion = input("Please enter your expression : ")
-    splitExpression = SplitExpression(expression)
-    # print(splitExpression)
-    Calculate(splitExpression)
+    # expression = "(500+80) * 3000/800 + 30 + (5 + 5)"
+    expression = input("Please enter your expression : ")
+    if not ValidateExpression(expression):
+        print("Sorry, but there are invalid characters in your input. Please try again with a valid expression. Thank you.")
+    else:
+        splitExpression = SplitExpression(expression)
+        result = Calculate(splitExpression)
+        print("The output of your expression is : \n")
+        print(result[0])
+
     value = input(">>")
-    
+
 Main()
